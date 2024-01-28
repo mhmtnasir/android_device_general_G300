@@ -1,0 +1,47 @@
+name: TWRP CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: TWRP Build CI
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Installing build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install zip gcc-multilib g++-multilib \
+            libc6-dev-i386 lib32ncurses5-dev lib32z1-dev python2.7 \
+            libgl1-mesa-dev libxml2-utils xsltproc schedtool libtinfo5 libncurses5-dev libncursesw5-dev libncurses5
+          
+          sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
+          sudo update-alternatives --set python /usr/bin/python2.7
+
+      - name: Syncing TWRP sources
+        run: |
+          mkdir ~/TWRP
+          cd ~/TWRP
+
+          mkdir ~/.bin
+          curl http://commondatastorage.googleapis.com/git-repo-downloads/repo > ~/.bin/repo
+          python3 ~/.bin/repo init --depth=1 -u https://github.com/minimal-manifest-twrp/platform_manifest_twrp_aosp.git -b twrp-11
+          python3 ~/.bin/repo sync -c --force-sync --optimized-fetch --no-tags --no-clone-bundle --prune -j$(nproc --all)
+          git clone --branch twrp-11 --single-branch https://github.com/mhmtnasir/android_device_general_G300.git device/general/G300
+          chmod -R a+x device/general/G300
+
+      - name: Building TWRP
+        run: |
+          cd ~/TWRP
+          source build/envsetup.sh
+          export ALLOW_MISSING_DEPENDENCIES=true
+          export LC_ALL=C
+          lunch twrp_G300-eng
+          make -j$(nproc --all) bootimage
+
+      - name: Uploading TWRP builds
+        uses: actions/upload-artifact@v2
+        with:
+          name: twrp
+          path: /home/runner/TWRP/out/target/product/G300/boot.*

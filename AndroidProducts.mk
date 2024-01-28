@@ -6,9 +6,9 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/omni_G300.mk
+    $(LOCAL_DIR)/twrp_G300.mk
 
 COMMON_LUNCH_CHOICES := \
-    omni_G300-user \
-    omni_G300-userdebug \
-    omni_G300-eng
+    twrp_G300-user \
+    twrp_G300-userdebug \
+    twrp_G300-eng
