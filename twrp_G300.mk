@@ -26,6 +26,6 @@ $(call inherit-product, vendor/twrp/config/common.mk)
 
 PRODUCT_DEVICE := G300
 PRODUCT_NAME := twrp_G300
-PRODUCT_BRAND := General Mobile
-PRODUCT_MODEL := GM 10
+PRODUCT_BRAND := GM
+PRODUCT_MODEL := General Mobile GM 10
 PRODUCT_MANUFACTURER := general
